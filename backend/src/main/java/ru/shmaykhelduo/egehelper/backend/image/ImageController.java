@@ -1,5 +1,6 @@
 package ru.shmaykhelduo.egehelper.backend.image;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +16,27 @@ public class ImageController {
     private final ImageService imageService;
 
     @PostMapping
-    public CreateImageResponse createImage(@RequestParam("file") MultipartFile file) throws IOException {
-        UUID id = imageService.createImage(file);
+    public ImageMetadata createImage(@RequestParam("file") @NotNull MultipartFile file) throws IOException {
+        return imageService.createImage(file);
+    }
 
-        return new CreateImageResponse(id);
+    @GetMapping("{id}/download")
+    public Resource downloadImage(@PathVariable @NotNull UUID id) {
+        return imageService.downloadImage(id);
+    }
+
+    @PutMapping("{id}")
+    public ImageMetadata updateMetadata(@PathVariable @NotNull UUID id, @RequestBody ImageMetadata metadata) {
+        return imageService.updateMetadata(id, metadata);
     }
 
     @GetMapping("{id}")
-    public Resource getImage(@RequestParam("id") UUID id) {
-        return imageService.getImage(id);
+    public ImageMetadata getMetadata(@PathVariable @NotNull UUID id) {
+        return imageService.getMetadata(id);
+    }
+
+    @DeleteMapping("{id}")
+    public void deleteImage(@PathVariable @NotNull UUID id) {
+        imageService.deleteImage(id);
     }
 }

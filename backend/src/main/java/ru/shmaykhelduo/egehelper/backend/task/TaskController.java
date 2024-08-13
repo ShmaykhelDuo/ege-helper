@@ -4,8 +4,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.shmaykhelduo.egehelper.backend.paging.PageDto;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -15,22 +15,24 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping
-    public List<TaskDto> getTasks() {
-        return taskService.getTasks();
+    public PageDto<TaskResponse> getTasks(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+        return taskService.getTasks(page, size);
     }
 
     @GetMapping("{id}")
-    public TaskDto getTask(@PathVariable @NotNull UUID id) {
+    public TaskResponse getTask(@PathVariable @NotNull UUID id) {
         return taskService.getTask(id);
     }
 
     @PostMapping
-    public TaskDto createTask(@Valid TaskDto request) {
+    public TaskResponse createTask(@Valid TaskRequest request) {
         return taskService.createTask(request);
     }
 
     @PutMapping("{id}")
-    public TaskDto updateTask(@PathVariable @NotNull UUID id, @Valid TaskDto request) {
+    public TaskResponse updateTask(@PathVariable @NotNull UUID id, @Valid TaskRequest request) {
         return taskService.updateTask(id, request);
     }
 

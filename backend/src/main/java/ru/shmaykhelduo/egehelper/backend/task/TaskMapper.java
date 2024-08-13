@@ -6,9 +6,7 @@ import java.util.List;
 
 @Mapper
 public interface TaskMapper {
-    TaskDto toDto(Task task);
+    TaskResponse toResponse(Task task);
 
-    List<TaskDto> toDtoList(List<Task> tasks);
-
-    Task toEntity(TaskDto dto);
+    List<TaskResponse> toResponseList(List<Task> tasks);
 }

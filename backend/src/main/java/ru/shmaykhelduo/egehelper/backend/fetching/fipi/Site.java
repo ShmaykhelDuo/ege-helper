@@ -20,10 +20,15 @@ public class Site {
 
         return elements.stream().map(element -> {
             String text = element.select(".cell_0").text();
+            String fipiId = element.id();
+            if (fipiId.length() > 1) {
+                fipiId = fipiId.substring(1);
+            }
 
-            Task task = new Task();
+            FipiTask task = new FipiTask();
             task.setText(text);
-            return task;
+            task.setFipiId(fipiId);
+            return (Task) task;
         }).toList();
     }
 }

@@ -25,5 +25,5 @@ public class Task {
     private List<Image> images = new ArrayList<>();
 
     @ManyToMany
-    private Set<Tag> tags = new HashSet<>();
+    private List<Tag> tags = new ArrayList<>();
 }
