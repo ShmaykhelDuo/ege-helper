@@ -8,6 +8,7 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Entity
+@Table(name = "images")
 @Getter
 @Setter
 public class Image {
