@@ -33,3 +33,7 @@ jwt:
       5yBnqj3i+A96o4B/ZwYrw/6nG+QyquJOjBkHDwf6qPQQb2CRJkyA1yWob9NAq/GF\
       gMRT0sxLyz9tpMKp4r+4e8dmnmt5EyDkNDFXhohbhPS6XPrEarehJFI/FAG3VJjx\
       fINw/chOzfKBt8Gl3kjEXw="
+
+logging:
+  level:
+    ru.shmaykhelduo.egehelper.backend: TRACE

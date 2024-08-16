@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import ru.shmaykhelduo.egehelper.backend.task.Task;
+import ru.shmaykhelduo.egehelper.backend.fetching.FetchedTask;
+import ru.shmaykhelduo.egehelper.backend.fetching.SSLHelper;
 
 import java.io.IOException;
 import java.net.URI;
@@ -14,8 +15,10 @@ import java.util.List;
 public class Site {
     private final URI uri;
 
-    public List<Task> getTasks() throws IOException {
-        Document document = Jsoup.connect(uri.toURL().toString()).get();
+    public List<FetchedTask> getTasks() throws IOException {
+        Document document = Jsoup.connect(uri.toURL().toString())
+                .sslSocketFactory(SSLHelper.getSSLSocketFactory())
+                .get();
         Elements elements = document.select(".qblock");
 
         return elements.stream().map(element -> {
@@ -25,10 +28,11 @@ public class Site {
                 fipiId = fipiId.substring(1);
             }
 
-            FipiTask task = new FipiTask();
+            FetchedTask task = new FetchedTask();
             task.setText(text);
-            task.setFipiId(fipiId);
-            return (Task) task;
+            task.setSourceName("fipi");
+            task.setSourceTaskId(fipiId);
+            return task;
         }).toList();
     }
 }

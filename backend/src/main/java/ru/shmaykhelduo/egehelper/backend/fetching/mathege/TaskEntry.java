@@ -1,32 +1,53 @@
 package ru.shmaykhelduo.egehelper.backend.fetching.mathege;
 
+import lombok.extern.slf4j.Slf4j;
+import ru.shmaykhelduo.egehelper.backend.fetching.FetchedTask;
 import ru.shmaykhelduo.egehelper.backend.image.Image;
-import ru.shmaykhelduo.egehelper.backend.task.Task;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+@Slf4j
 public class TaskEntry {
     private final int number;
+    private final String id;
     private final URI uri;
 
-    public TaskEntry(int number, URI rootUri, String uri) {
+    public TaskEntry(int number, String id, URI rootUri, String uri) {
         this.number = number;
-        this.uri = rootUri.relativize(URI.create(uri));
+        this.id = id;
+        this.uri = rootUri.resolve(uri);
     }
 
-    public Task getTask() throws IOException {
+    public FetchedTask getTask() throws IOException {
         String tex = "";
         List<byte[]> images = new ArrayList<>();
 
-        try (ZipInputStream in = new ZipInputStream(new BufferedInputStream(uri.toURL().openStream()))) {
+        log.debug("Downloading task entry for number {}, id {}, uri {}", number, id, uri);
+        InputStream conn = null;
+        for (int i = 0; i < 5; i++) {
+            try {
+                conn = uri.toURL().openStream();
+                break;
+            } catch (SocketTimeoutException e) {
+                log.warn("Downloading task entry for number {}, id {}, uri {} failed, attempt {} of 5", number, id, uri, i + 1, e);
+            }
+        }
+        if (conn == null) {
+            throw new RuntimeException("failed to download task entry from " + uri);
+        }
+
+        try (ZipInputStream in = new ZipInputStream(new BufferedInputStream(conn))) {
             for (ZipEntry entry = in.getNextEntry(); entry != null; entry = in.getNextEntry()) {
+                log.debug("Handling file {} for number {}, id {}, uri {}", entry.getName(), number, id, uri);
+
                 if (entry.isDirectory()) {
                     continue;
                 }
@@ -37,14 +58,19 @@ public class TaskEntry {
                 }
 
                 if (entry.getName().endsWith(".eps")) {
+                    log.trace("Getting stream from converter for file {}", entry.getName());
                     try (InputStream input = EpsConverter.convertEps(in)) {
+                        log.trace("Got stream from converter for file {}, reading...", entry.getName());
                         images.add(input.readAllBytes());
+                        log.trace("Read all from file {}", entry.getName());
                     }
                 }
             }
         }
 
-        Task task = new Task();
+        log.debug("Downloaded task entry for number {}, id {}, uri {}", number, id, uri);
+
+        FetchedTask task = new FetchedTask();
         task.setText(tex);
         task.setImages(images.stream().map(i -> {
             Image image = new Image();
@@ -52,6 +78,9 @@ public class TaskEntry {
             image.setImage(i);
             return image;
         }).toList());
+
+        task.setSourceName("mathege");
+        task.setSourceTaskId(id);
 
         return task;
     }

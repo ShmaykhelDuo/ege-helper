@@ -50,8 +50,10 @@ create table user_tasks
     user_id uuid references users (id)
 );
 
-create table fipi_tasks
+create table fetched_tasks
 (
     task_id uuid primary key references tasks (id),
-    fipi_id varchar(6) not null unique
+    source_name varchar(16) not null,
+    source_task_id text not null,
+    unique (source_name, source_task_id)
 );
