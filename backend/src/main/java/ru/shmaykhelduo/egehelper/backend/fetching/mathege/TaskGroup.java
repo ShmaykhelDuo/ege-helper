@@ -38,8 +38,13 @@ public class TaskGroup {
                 document = Jsoup.connect(uri.toURL().toString())
                         .followRedirects(true).get();
                 break;
-            } catch (SocketTimeoutException e) {
+            } catch (IOException e) {
                 log.warn("task entries from {} timed out, try {} of 5", uri, i + 1, e);
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         }
         if (document == null) {

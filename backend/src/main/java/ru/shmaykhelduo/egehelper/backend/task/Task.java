@@ -25,7 +25,7 @@ public class Task {
 
     private String answer;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "tasks_images",
             joinColumns = @JoinColumn(name = "task_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "image_id", referencedColumnName = "id"))

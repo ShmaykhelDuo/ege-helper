@@ -14,6 +14,7 @@ create table images
 (
     id    uuid primary key,
     name  text not null,
+    type  text not null,
     image oid  not null
 );
 
@@ -52,8 +53,8 @@ create table user_tasks
 
 create table fetched_tasks
 (
-    task_id uuid primary key references tasks (id),
-    source_name varchar(16) not null,
-    source_task_id text not null,
+    task_id        uuid primary key references tasks (id),
+    source_name    varchar(16) not null,
+    source_task_id text        not null,
     unique (source_name, source_task_id)
 );

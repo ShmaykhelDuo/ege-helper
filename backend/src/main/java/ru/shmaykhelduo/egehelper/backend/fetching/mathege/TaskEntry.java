@@ -1,6 +1,7 @@
 package ru.shmaykhelduo.egehelper.backend.fetching.mathege;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import ru.shmaykhelduo.egehelper.backend.fetching.FetchedTask;
 import ru.shmaykhelduo.egehelper.backend.image.Image;
 
@@ -9,8 +10,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.net.URI;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -36,8 +39,13 @@ public class TaskEntry {
             try {
                 conn = uri.toURL().openStream();
                 break;
-            } catch (SocketTimeoutException e) {
+            } catch (IOException e) {
                 log.warn("Downloading task entry for number {}, id {}, uri {} failed, attempt {} of 5", number, id, uri, i + 1, e);
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         }
         if (conn == null) {
@@ -53,7 +61,8 @@ public class TaskEntry {
                 }
 
                 if (entry.getName().endsWith(".tex")) {
-                    tex = new String(in.readAllBytes());
+                     tex = new String(in.readAllBytes());
+                     tex = LatexHandler.extract(tex);
                     continue;
                 }
 
@@ -75,9 +84,10 @@ public class TaskEntry {
         task.setImages(images.stream().map(i -> {
             Image image = new Image();
             image.setName("");
+            image.setType(MediaType.IMAGE_PNG_VALUE);
             image.setImage(i);
             return image;
-        }).toList());
+        }).collect(Collectors.toCollection(ArrayList::new)));
 
         task.setSourceName("mathege");
         task.setSourceTaskId(id);

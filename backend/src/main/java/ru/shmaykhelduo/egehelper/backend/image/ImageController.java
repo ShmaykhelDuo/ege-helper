@@ -1,8 +1,10 @@
 package ru.shmaykhelduo.egehelper.backend.image;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +23,8 @@ public class ImageController {
     }
 
     @GetMapping("{id}/download")
-    public Resource downloadImage(@PathVariable @NotNull UUID id) {
+    @SecurityRequirements
+    public ResponseEntity<Resource> downloadImage(@PathVariable @NotNull UUID id) {
         return imageService.downloadImage(id);
     }
 

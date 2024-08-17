@@ -4,8 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.multipart.MultipartFile;
 import ru.shmaykhelduo.egehelper.backend.error.ApiException;
 
@@ -28,11 +31,13 @@ public class ImageService {
         return imageMapper.toMetadata(image);
     }
 
-    public Resource downloadImage(UUID id) {
+    public ResponseEntity<Resource> downloadImage(UUID id) {
         Image image = imageRepository.findById(id)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Image not found"));
 
-        return new ByteArrayResource(image.getImage());
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(image.getType()))
+                .body(new ByteArrayResource(image.getImage()));
     }
 
     public ImageMetadata updateMetadata(UUID id, ImageMetadata metadata) {
