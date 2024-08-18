@@ -22,5 +22,5 @@ jobs:
       - uses: browser-actions/setup-chrome@v1
         with:
           install-chromedriver: true
-      - run: ./gradlew test
+      - run: ./gradlew test --scan
         working-directory: ./frontend/tests
