@@ -13,7 +13,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - uses: gradle/actions/setup-gradle@v4
-      - run: docker-compose up -d
+      - run: docker compose up -d
         working-directory: ./backend
       - run: ./gradlew bootJar
       - run: java -jar backend-0.0.1-SNAPSHOT.jar & sleep 5000
