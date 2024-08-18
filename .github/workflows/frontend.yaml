@@ -19,5 +19,6 @@ jobs:
         working-directory: ./backend
       - run: java -jar backend-0.0.1-SNAPSHOT.jar & sleep 10
         working-directory: ./backend/build/libs
+      - uses: browser-actions/setup-chrome@v1
       - run: ./gradlew test
         working-directory: ./frontend/tests
