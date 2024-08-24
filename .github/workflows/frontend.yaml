@@ -1,0 +1,25 @@
+name: Frontend
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - uses: gradle/actions/setup-gradle@v4
+      - run: docker compose up -d
+        working-directory: ./backend
+      - run: ./gradlew bootJar
+        working-directory: ./backend
+      - run: java -jar backend-0.0.1-SNAPSHOT.jar & sleep 10
+        working-directory: ./backend/build/libs
+      - run: python -m http.server 8081 &
+        working-directory: ./frontend
+      - run: ./gradlew test
+        working-directory: ./frontend/tests

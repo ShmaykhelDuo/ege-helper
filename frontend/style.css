@@ -1,0 +1,31 @@
+body {
+    font-family: sans-serif;
+}
+
+header {
+    overflow: hidden;
+}
+
+#logo {
+    float: left;
+}
+
+#user {
+    float: right;
+}
+
+.task {
+    margin: 0.5em;
+    padding: 0.5em;
+    background-color: lightgray;
+    border-radius: 0.5em;
+    overflow: hidden;
+}
+
+.task img {
+    float: right;
+}
+
+.page_link {
+    margin: 0.2em;
+}

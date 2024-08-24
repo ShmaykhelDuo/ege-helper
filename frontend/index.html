@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EGEHelper</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="LatinModern/mathfonts.css">
+    <script src="mathjax-config.js" defer></script>
+    <script id="MathJax-script" async src="mathjax/tex-chtml.js"></script>
+    <script src="app.js"></script>
+</head>
+<body>
+<header>
+    <div id="logo">EGEHelper</div>
+    <div id="user">
+        <span id="user_info"></span>
+        <button onclick="signOut()">Sign Out</button>
+    </div>
+    <script>
+        loadUserInfo();
+    </script>
+</header>
+<div>
+    Page <span id="page_count"></span>
+</div>
+<div id="tasks"></div>
+<div id="pages"></div>
+<script>
+    loadTasks();
+</script>
+</body>
+</html>
